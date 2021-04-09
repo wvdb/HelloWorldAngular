@@ -1,0 +1,92 @@
+<div>
+	<p>
+		Page to upload and process CSV files.
+	</p>
+</div>
+<div>
+	<form [formGroup]="csvFileUploadForm" validate>
+		<div class="form-group row">
+			<label class="col-sm-2" for="fileType">
+				CSV File type<span class="required"> * </span>
+				<ng-template #fileTypeTip>
+					<p>
+						File-type RECOMMENDATIONS_V1: name (first field), customerId (third field), crid-value (fourth field)<br>
+						File-type ZIP_CODE: customerId (first field), zipCode (second field)
+					</p>
+				</ng-template>
+			</label>
+			<div class="col-sm-10">
+				<div class="row">
+					<div class="col-sm-4">
+						<select id="fileType" class="form-control form-control-sm" formControlName="fileType" [compareWith]="compareFileType">
+							<option *ngFor="let fileType of fileTypes" [ngValue]="fileType">{{fileType.name}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4">
+						<div *ngIf="fileType.invalid && (fileType.dirty || fileType.touched)" class="alert alert-danger">
+							<div *ngIf="fileType.errors.required">
+								<span>File type is required.</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-sm-2" for="separator">Separator<span class="required"> *</span></label>
+			<div class="col-sm-1">
+				<input type="text" id="separator" class="form-control form-control-sm" formControlName="separator" maxlength="1" size="1">
+				<div *ngIf="separator.invalid && (separator.dirty || separator.touched)" class="alert alert-danger">
+					<div *ngIf="separator.errors.required">
+						<span>Separator is required.</span>
+					</div>
+					<div *ngIf="separator.errors.minlength || separator.errors.maxlength">
+						<span>Separator must be exactly one character only.</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-sm-2">Validate?<span class="required"> *</span></label>
+			<div class="col-sm-10">
+				<div class="row">
+					<div class="col-sm checkbox">
+						<p-inputSwitch onLabel="YES" offLabel="NO" formControlName="validate"></p-inputSwitch>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-sm-2">Header?<span class="required"> *</span></label>
+			<div class="col-sm-10">
+				<div class="row">
+					<div class="col-sm checkbox">
+						<p-inputSwitch onLabel="YES" offLabel="NO" formControlName="header"></p-inputSwitch>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group row">
+			<label class="col-sm-2" for="fileUpload">
+				File Upload
+				<ng-template #fileUploadTooltip>
+					<p>
+						File-names should only contain following charachters: a-zA-Z0-9_-.()
+					</p>
+				</ng-template>
+			</label>
+			<div class="col-sm-10">
+				<p-fileUpload mode="advanced" multiple="false" accept=".csv" customUpload="true"
+					(uploadHandler)="csvFileUploader($event)" [auto]="false" chooseLabel="Browse"
+					maxFileSize="{{maxUploadSize}}" #csvFileUpload [disabled]="!isFileUploadAllowed()">
+				</p-fileUpload>
+			</div>
+		</div>
+	</form>
+</div>
